@@ -7,6 +7,7 @@ import './screen/tabs_screen.dart';
 import './screen/filters_screen.dart';
 import './dummy_data.dart';
 import './models/meal.dart';
+import './screen/favorite_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +29,7 @@ class _MyAppState extends State<MyApp> {
   };
 
   List<Meal> _availiableMeals = DUMMY_MEALS;
+  List<Meal> _favoriteList = [];
 
   void _setFilters(Map<String, bool> filterData) {
     setState(() {
@@ -51,6 +53,24 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void _toggleFavorite(String mealId) {
+    final existingIndex = _favoriteList.indexWhere((meal) => meal.id == mealId);
+
+    if (existingIndex == -1) {
+      print('1');
+      return setState(() {
+        _favoriteList.add(DUMMY_MEALS.firstWhere((meal) => meal.id == mealId));
+      });
+    }
+    setState(() {
+      _favoriteList.removeAt(existingIndex);
+    });
+  }
+  
+  bool _isFavoriteMeal(String mealId) {
+    return _favoriteList.any((meal) => meal.id == mealId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -71,10 +91,11 @@ class _MyAppState extends State<MyApp> {
       ),
       // home: CategoriesScreen(),
       routes: {
-        '/': (ctx) => TabsScreen(),
+        '/': (ctx) => TabsScreen(_favoriteList),
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(_availiableMeals),
-        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(_toggleFavorite, _isFavoriteMeal),
         FiltersScreen.routeName: (ctx) => FiltersScreen(_filters, _setFilters),
+        FavoriteScreen.routeName: (ctx) => FavoriteScreen(_favoriteList),
       },
       onGenerateRoute: (settings) {
         print(settings.arguments);
