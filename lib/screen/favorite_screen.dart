@@ -21,7 +21,7 @@ class FavoriteScreen extends StatelessWidget {
       itemBuilder: (BuildContext ctx, int i) {
         return MealItem(favoriteList[i]);
       },
-      // itemCount: favoriteList.length,
+      itemCount: favoriteList.length,
       //Text('${categoryMeals[i].title}');
     );
   }
